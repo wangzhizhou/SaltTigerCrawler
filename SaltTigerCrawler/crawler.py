@@ -4,17 +4,32 @@ import re
   
 def getUrls(tag = None):
     scraper = BeautifulScraper()
-    site = "https://salttiger.com" + ("" if tag == None else "/tag/%s" % tag.lower())
+    site = "https://salttiger.com/" + ("" if tag == None else "tag/%s/" % tag.lower())
     body = scraper.go(site)  
-
-    articles = body.select('article')
-    totalPages = body.select('div.wp-pagenavi span.pages')[0].text
-    pattern = re.compile(r'(\d+)')
-    counts = int(re.findall(pattern,totalPages)[-1])    
+    n = 0
+    articles = body.select('article')   
     for article in articles:
         header = article.select('h1.entry-title')[0].text
         link = article.select('div.entry-content p')[0].select('a')[-1]['href']
-        print('%s - %s' % (header,link))
+        n = n + 1
+        print('(%d)%s - %s' % (++n,header,link))
+
+    totalPages = body.select('div.wp-pagenavi span.pages')[0].text
+    pattern = re.compile(r'(\d+)')
+    counts = int(re.findall(pattern,totalPages)[-1])  
+
+    for i in range(2,counts + 1):
+
+        url = site + ("page/%d/" % i)
+        body = scraper.go(url)
+        articles = body.select('article')
+
+        for article in articles:
+            header = article.select('h1.entry-title')[0].text
+            link = article.select('div.entry-content p')[0].select('a')[-1]['href']
+            n = n + 1
+            print('(%d)%s - %s' % (++n,header,link))
+    
 
 if __name__ == '__main__':
-    getUrls()
+    getUrls('ios')
