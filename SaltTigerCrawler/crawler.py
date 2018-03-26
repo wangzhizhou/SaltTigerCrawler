@@ -10,7 +10,13 @@ def getUrls(tag = None):
     articles = body.select('article')   
     for article in articles:
         header = article.select('h1.entry-title')[0].text
-        link = article.select('div.entry-content p')[0].select('a')[-1]['href']
+        
+        links = article.select('div.entry-content p')[0].select('a')
+        if len(links) > 0:
+            link = links[-1]['href']
+        else:
+            link = "Not Found Download link"
+            
         n = n + 1
         print('(%d)%s - %s' % (++n,header,link))
 
@@ -26,10 +32,16 @@ def getUrls(tag = None):
 
         for article in articles:
             header = article.select('h1.entry-title')[0].text
-            link = article.select('div.entry-content p')[0].select('a')[-1]['href']
+
+            links = article.select('div.entry-content p')[0].select('a')
+            if len(links) > 0:
+                link = links[-1]['href']
+            else:
+                link = "Not Found Download link"
+
             n = n + 1
             print('(%d)%s - %s' % (++n,header,link))
     
 
 if __name__ == '__main__':
-    getUrls('ios')
+    getUrls()
