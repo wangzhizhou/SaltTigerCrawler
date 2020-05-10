@@ -29,17 +29,21 @@ class SaltTigerCrawler:
 
     def parse_meta_info(self, article):
         header = article.select('h1.entry-title')[0].text.strip()
-        meta_info = article.select('div.entry-content p')[0]
+        entry_content = article.select('div.entry-content')[0]
+        paragraphs = entry_content.select('p')
+        meta_info = paragraphs[0]
         links = meta_info.select('a')
         image_url = meta_info.select('img')[0]['src']
-        content_text = "".join(article.select('div.entry-content p')[0].text.strip().split('\n')[-1].split()).split(u"：")[-1]
+        content_text = "".join(meta_info.text.strip().split('\n')[-1].split()).split(u"：")[-1]
+        detail_url = paragraphs[-1].select('a')[0]['href'].strip()
+
         if len(links) > 0:
             link = links[-1]['href']
         else:
             link = "Not Found Download link"
 
         self.number = self.number + 1
-        print('(%d)\nTitle: %s\nCover: %s\nBaiduYun: %s\nCode: %s\n' %(self.number, header, image_url, link, content_text if len(content_text) == 4 else "None"))
+        print('(%d)\nTitle: %s\nCover: %s\nBaiduYun: %s\nCode: %s\ndetail_url: %s\n' %(self.number, header, image_url, link, content_text if len(content_text) == 4 else "None", detail_url))
 
 if __name__ == '__main__':
     SaltTigerCrawler().getUrls('kotlin')
